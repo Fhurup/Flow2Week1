@@ -3,6 +3,7 @@ package rest;
 import dto.PersonDTO;
 import entities.Address;
 import entities.Person;
+import exceptions.PersonNotFoundException;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -21,6 +22,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.AfterAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -153,8 +156,8 @@ public class PersonResourceTest {
                 .body("id", notNullValue());
 
     }
-    
-        @Test
+
+    @Test
     public void testEditPerson() throws Exception {
         PersonDTO person = new PersonDTO(1, "Kim", "Svend", "90909090", "Danmarksgade", "Aalborg", 9000);
         given()
@@ -169,4 +172,6 @@ public class PersonResourceTest {
                 .body("id", notNullValue());
 
     }
+
+
 }

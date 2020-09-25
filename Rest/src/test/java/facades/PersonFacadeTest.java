@@ -11,6 +11,8 @@ import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +23,8 @@ public class PersonFacadeTest {
 
     private static EntityManagerFactory emf;
     private static PersonFacade facade;
-    private static Person p1 = new Person ("John", "Svendson", "98989898");
-    private static Person p2 = new Person ("Svend", "Johnsen", "89898989");
+    private static Person p1 = new Person("John", "Svendson", "98989898");
+    private static Person p2 = new Person("Svend", "Johnsen", "89898989");
     private static Address a1 = new Address("Danmarksgade 22", "Aalborg", 9000);
     private static Address a2 = new Address("Svenstrupvej 99", "Svenstrup", 9230);
 
@@ -31,8 +33,8 @@ public class PersonFacadeTest {
 
     @BeforeAll
     public static void setUpClass() {
-       emf = EMF_Creator.createEntityManagerFactoryForTest();
-       facade = PersonFacade.getPersonFacade(emf);
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
+        facade = PersonFacade.getPersonFacade(emf);
     }
 
     @AfterAll
@@ -70,8 +72,6 @@ public class PersonFacadeTest {
     public void testPersonCount() {
         assertEquals(2, facade.getPersonCount(), "Expects two rows in the database");
     }
-    
-    
 
     @Test
     public void testgetPersonById() throws PersonNotFoundException {
@@ -84,18 +84,41 @@ public class PersonFacadeTest {
         PersonsDTO personsDTO = facade.getAllPersons();
         assertEquals(2, personsDTO.getAll().size(), "2");
     }
-    
+
     @Test
     public void testGetEditPerson() throws PersonNotFoundException {
         PersonDTO person = new PersonDTO(p1.getId(), "Kim", "Svend", "90909090", "Danmarksgade", "Aalborg", 9000);
         assertEquals(person.getfName(), facade.editPerson(person).getfName(), "Kim");
     }
-    
+
     @Test
     public void testGetAddPerson() throws PersonNotFoundException {
-          assertEquals("Svendning", facade.addPerson("Svendning", "Bob", "10293029", "Derovre", "Ingen steder", 00000).getfName(), "Svendning");
+        assertEquals("Svendning", facade.addPerson("Svendning", "Bob", "10293029", "Derovre", "Ingen steder", 00000).getfName(), "Svendning");
+    }
+
+    @Test
+    public void TestPersonNotFoundExceptionThrowGetPersonById() {
+        Exception exception = assertThrows(PersonNotFoundException.class, () -> {
+            facade.getPerson(1000);
+        });
+
+        String expectedMessage = "No person with provided id found";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+    
+     @Test
+    public void TestPersonNotFoundExceptionThrowDelete() {
+        Exception exception = assertThrows(PersonNotFoundException.class, () -> {
+            facade.deletePerson(1000);
+        });
+
+        String expectedMessage = "Could not delete, provided id does not exist, hallo";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
     
     
-
 }
