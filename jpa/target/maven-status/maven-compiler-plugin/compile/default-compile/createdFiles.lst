@@ -1,0 +1,10 @@
+entities/Address_.class
+entities/Persons_.class
+entities/Persons.class
+entities/Fee_.class
+entities/Fee.class
+entities/Tester.class
+entities/Address.class
+entities/SwimStyle_.class
+dto/PersonStyleDTO.class
+entities/SwimStyle.class
